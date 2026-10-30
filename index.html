@@ -58,32 +58,31 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .skip{opacity:0;pointer-events:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* ---------- ЭКРАНЫ ДЕМО: внутри живое приложение ---------- */
-.demo{padding:0;background:#0E1626}
-.demo iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;pointer-events:none;background:#0E1626}
-.demo .shade{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,14,28,0) 78%,rgba(8,14,28,.7) 100%);transition:opacity .5s}
-.demo{cursor:pointer}
-.demo .info{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;
-  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  transition:opacity .4s,transform .4s}
-.demo .lbl{margin:0;min-width:0;font:600 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;
-  background:rgba(8,14,28,.45);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:9px 14px;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.open{flex:none;display:flex;align-items:center;gap:8px;font:600 14px var(--f-body);color:var(--ink);background:#fff;border:0;border-radius:999px;padding:11px 20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+/* ---------- ЭКРАНЫ ДЕМО: приложение в своём размере, подпись и «назад» — отдельными полосками ---------- */
+:root{--tg-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));--bar:60px}
+.demo{display:flex;flex-direction:column;padding:var(--tg-top) 0 0;background:#0E1626;cursor:pointer;
+  transition:padding-top .35s ease}
+.demo iframe{position:relative;flex:1;min-height:0;width:100%;border:0;display:block;pointer-events:none;background:#0E1626}
+.demo .shade{display:none}
+.demo .info{flex:none;box-sizing:border-box;height:calc(var(--bar) + env(safe-area-inset-bottom,0px));overflow:hidden;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;background:#0E1626;
+  padding:0 max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px));
+  border-top:1px solid rgba(255,255,255,.08);transition:height .35s ease,opacity .25s}
+.demo .lbl{margin:0;min-width:0;font:600 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;opacity:.8;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.open{flex:none;display:flex;align-items:center;gap:8px;font:600 14px var(--f-body);color:var(--ink);background:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
 .open:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.demo .loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font:500 13px var(--f-body);color:rgba(255,255,255,.6)}
+.demo .loading{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font:500 13px var(--f-body);color:rgba(255,255,255,.6)}
 .demo.loaded .loading{display:none}
-/* режим «внутри приложения» */
+/* режим «внутри приложения»: снизу полоска уходит, сверху появляется полоска с кнопкой возврата */
+.demo.live{cursor:auto;padding-top:calc(var(--tg-top) + var(--bar))}
 .demo.live iframe{pointer-events:auto}
-.demo.live .shade,.demo.live .info{opacity:0;pointer-events:none}
-.demo.live .info{transform:translateY(20px)}
+.demo.live .info{height:0;opacity:0;border-top:0}
 body.inapp .feed{overflow:hidden;scroll-snap-type:none}
-.back{position:fixed;z-index:20;top:calc(12px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));
+.back{position:fixed;z-index:20;top:calc(env(safe-area-inset-top,0px) + var(--tg-top) + 12px);left:max(12px,env(safe-area-inset-left,0px));
   display:flex;align-items:center;gap:6px;font:600 13px var(--f-body);color:var(--ink);
-  background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.95);border-radius:999px;padding:8px 14px 8px 10px;cursor:pointer;
-  box-shadow:0 4px 16px rgba(10,20,40,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.back:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  background:#fff;border:0;border-radius:999px;padding:8px 14px 8px 10px;cursor:pointer}
+.back:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
 @media (prefers-reduced-motion:reduce){.hint svg{animation:none}.overlay{transition:none}}
 </style>
