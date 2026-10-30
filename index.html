@@ -84,9 +84,10 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .card .tag svg{flex:none}
 
 /* ---------- ОТКРЫТОЕ ПРИЛОЖЕНИЕ ---------- */
-.viewer{position:fixed;inset:0;z-index:30;padding-top:var(--top-inset);background:#0E1626;
+.viewer{position:fixed;inset:0;z-index:30;box-sizing:border-box;background:#0E1626;
   transform:translateY(100%);transition:transform .45s cubic-bezier(.2,.8,.2,1);visibility:hidden}
 .viewer.on{transform:none;visibility:visible}
+.viewer.pad{padding-top:var(--top-inset)}
 .viewer iframe{display:block;width:100%;height:100%;border:0;background:#0E1626}
 .viewer .spin{position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;
   border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:spin .8s linear infinite}
@@ -130,7 +131,7 @@ body.inapp .feed{overflow:hidden}
           <img src="covers/viet-ride.jpg" alt="" width="1024" height="576" loading="lazy" decoding="async">
           <span class="tag">Viet Ride · аренда байков <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </button>
-        <button class="card" type="button" data-src="https://travelkozko.github.io/step-loud/" aria-label="Открыть Step Loud">
+        <button class="card" type="button" data-src="https://travelkozko.github.io/step-loud/" data-pad="1" aria-label="Открыть Step Loud">
           <img src="covers/step-loud.jpg" alt="" width="1024" height="576" loading="lazy" decoding="async">
           <span class="tag">Step Loud · магазин кроссовок <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </button>
@@ -185,9 +186,9 @@ const openApp=src=>{
   Object.values(frames).forEach(f=>f.hidden=true);
   let f=frames[src];
   if(!f){f=document.createElement('iframe');f.title='Демо-приложение';f.allow='autoplay; fullscreen';
-    viewer.classList.remove('loaded');f.addEventListener('load',()=>viewer.classList.add('loaded'),{once:true});
+    viewer.classList.remove('loaded');f.addEventListener('load',()=>{viewer.classList.add('loaded');forward(f);setTimeout(()=>forward(f),300);setTimeout(()=>forward(f),1200);},{once:true});
     f.src=src;viewer.appendChild(f);frames[src]=f;}
-  else viewer.classList.add('loaded');
+  else{viewer.classList.add('loaded');forward(f);}
   f.hidden=false;open=src;viewer.classList.add('on');viewer.setAttribute('aria-hidden','false');
   document.body.classList.add('inapp');back.hidden=inTG;haptic('medium');
   try{tg&&tg.BackButton&&tg.BackButton.show();}catch(e){}
@@ -197,7 +198,16 @@ const closeApp=()=>{
   document.body.classList.remove('inapp');back.hidden=true;haptic('light');
   try{tg&&tg.BackButton&&tg.BackButton.hide();}catch(e){}
 };
-document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>openApp(c.dataset.src)));
+// приложению внутри витрины передаём те же отступы, что Telegram даёт ему при прямом открытии
+const forward=f=>{try{const W=f.contentWindow.Telegram&&f.contentWindow.Telegram.WebView;if(!W||!tg)return;
+  W.receiveEvent('safe_area_changed',tg.safeAreaInset||{top:0,bottom:0,left:0,right:0});
+  W.receiveEvent('content_safe_area_changed',tg.contentSafeAreaInset||{top:0,bottom:0,left:0,right:0});
+  if(tg.isFullscreen)W.receiveEvent('fullscreen_changed',{is_fullscreen:true});
+  if(tg.viewportHeight)W.receiveEvent('viewport_changed',{height:tg.viewportHeight,is_expanded:true,is_state_stable:true});
+}catch(e){}};
+const forwardAll=()=>Object.values(frames).forEach(forward);
+try{tg&&['safeAreaChanged','contentSafeAreaChanged','fullscreenChanged','viewportChanged'].forEach(e=>tg.onEvent(e,forwardAll));}catch(e){}
+document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{viewer.classList.toggle('pad',c.dataset.pad==='1');openApp(c.dataset.src);}));
 back.addEventListener('click',closeApp);
 try{tg&&tg.BackButton&&tg.BackButton.onClick(closeApp);}catch(e){}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeApp();});
