@@ -62,33 +62,43 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .skip{opacity:0;pointer-events:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* ---------- ЭКРАНЫ ДЕМО: приложение в своём размере, подпись и «назад» — отдельными полосками ---------- */
-:root{--tg-top:0px;--bar:60px}
-.demo{display:flex;flex-direction:column;padding:var(--top-inset) 0 0;background:#0E1626;cursor:pointer;
-  transition:padding-top .35s ease}
-.demo iframe{position:relative;flex:1;min-height:0;width:100%;border:0;display:block;pointer-events:none;background:#0E1626}
-.demo .shade{display:none}
-.demo .info{flex:none;box-sizing:border-box;height:calc(var(--bar) + var(--bottom-inset));overflow:hidden;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;background:#0E1626;
-  padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));
-  border-top:1px solid rgba(255,255,255,.08);padding-bottom:var(--bottom-inset);transition:height .35s ease,opacity .25s}
-.demo .lbl{margin:0;min-width:0;font:600 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;opacity:.8;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.open{flex:none;display:flex;align-items:center;gap:8px;font:600 14px var(--f-body);color:var(--ink);background:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
-.open:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.demo .loading{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font:500 13px var(--f-body);color:rgba(255,255,255,.6)}
-.demo.loaded .loading{display:none}
-/* режим «внутри приложения»: снизу полоска уходит, сверху появляется полоска с кнопкой возврата */
-.demo.live{cursor:auto}
-.demo.live iframe{pointer-events:auto}
-.demo.live .info{height:0;opacity:0;border-top:0}
-body.inapp .feed{overflow:hidden;scroll-snap-type:none}
-.back{position:fixed;z-index:20;top:calc(var(--top-inset) + 12px);left:max(12px,env(safe-area-inset-left,0px));
+/* ---------- ЭКРАН 2: обложки проектов ---------- */
+.works{height:auto;min-height:100%;scroll-snap-align:start;display:flex;flex-direction:column;gap:18px;
+  padding-block:calc(var(--top-inset) + 28px) calc(var(--bottom-inset) + 32px);
+  background:radial-gradient(110% 50% at 0% 100%,#F8E3D6 0%,transparent 60%),radial-gradient(90% 40% at 100% 0%,#DCE8F7 0%,transparent 60%),var(--pearl)}
+.works-head{display:flex;flex-direction:column;gap:6px}
+.works-head h2{margin:0;font:800 clamp(24px,7vw,32px)/1.05 var(--f-display);letter-spacing:-.01em;color:var(--ink)}
+.works-head p{margin:0;font:500 14px/1.4 var(--f-body);color:var(--ink-soft)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px;max-width:980px}
+.card{position:relative;display:block;width:100%;padding:0;border:0;border-radius:22px;overflow:hidden;cursor:pointer;
+  aspect-ratio:16/9;max-width:100%;background:#0E1626;box-shadow:0 14px 34px rgba(30,45,80,.18);
+  transition:transform .25s ease,box-shadow .25s ease;-webkit-tap-highlight-color:transparent}
+.card img{display:block;width:100%;height:100%;object-fit:cover}
+.card:active{transform:scale(.97)}
+@media (hover:hover){.card:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(30,45,80,.24)}}
+.card:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.card .tag{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;
+  font:600 12px var(--f-body);letter-spacing:.06em;color:#fff;background:rgba(8,14,28,.55);
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 12px 7px 14px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.card .tag svg{flex:none}
+
+/* ---------- ОТКРЫТОЕ ПРИЛОЖЕНИЕ ---------- */
+.viewer{position:fixed;inset:0;z-index:30;padding-top:var(--top-inset);background:#0E1626;
+  transform:translateY(100%);transition:transform .45s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.viewer.on{transform:none;visibility:visible}
+.viewer iframe{display:block;width:100%;height:100%;border:0;background:#0E1626}
+.viewer .spin{position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;
+  border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:spin .8s linear infinite}
+.viewer.loaded .spin{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.back{position:fixed;z-index:31;top:calc(var(--top-inset) + 12px);left:max(12px,env(safe-area-inset-left,0px));
   display:flex;align-items:center;gap:6px;font:600 13px var(--f-body);color:var(--ink);
   background:#fff;border:0;border-radius:999px;padding:8px 14px 8px 10px;cursor:pointer}
 .back:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
-@media (prefers-reduced-motion:reduce){.hint svg{animation:none}.overlay{transition:none}}
+body.inapp .feed{overflow:hidden}
+@media (prefers-reduced-motion:reduce){.viewer{transition:none}.hint svg{animation:none}.overlay{transition:none}}
 </style>
 </head>
 <body>
@@ -106,46 +116,31 @@ body.inapp .feed{overflow:hidden;scroll-snap-type:none}
     </div>
   </section>
 
-  <section class="screen demo" data-src="https://travelkozko.github.io/pogruzhenie/" aria-label="Демо 01 · Дайв-центр: ПОГРУЖЕНИЕ">
-    <span class="loading">Загрузка…</span>
-    <iframe title="ПОГРУЖЕНИЕ" tabindex="-1" loading="lazy" allow="autoplay; fullscreen"></iframe>
-    <div class="shade"></div>
-    <div class="info">
-      <p class="lbl">Демо 01 · Дайв-центр</p>
-      <button class="open" type="button">Открыть
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
+  <section class="screen works" id="works" aria-label="Проекты">
+    <div class="works-head">
+      <h2>Наши проекты</h2>
+      <p>Нажмите на обложку, чтобы открыть приложение</p>
+    </div>
+    <div class="cards">
+        <button class="card" type="button" data-src="https://travelkozko.github.io/pogruzhenie/" aria-label="Открыть Погружение">
+          <img src="covers/pogruzhenie.jpg" alt="" width="1024" height="576" loading="lazy" decoding="async">
+          <span class="tag">Погружение · дайв-центр <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </button>
+        <button class="card" type="button" data-src="https://travelkozko.github.io/viet-ride/" aria-label="Открыть Viet Ride">
+          <img src="covers/viet-ride.jpg" alt="" width="1024" height="576" loading="lazy" decoding="async">
+          <span class="tag">Viet Ride · аренда байков <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </button>
+        <button class="card" type="button" data-src="https://travelkozko.github.io/step-loud/" aria-label="Открыть Step Loud">
+          <img src="covers/step-loud.jpg" alt="" width="1024" height="576" loading="lazy" decoding="async">
+          <span class="tag">Step Loud · магазин кроссовок <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </button>
     </div>
   </section>
-
-  <section class="screen demo" data-src="https://travelkozko.github.io/viet-ride/" aria-label="Демо 02 · Аренда байков: VIET RIDE">
-    <span class="loading">Загрузка…</span>
-    <iframe title="VIET RIDE" tabindex="-1" loading="lazy" allow="autoplay; fullscreen"></iframe>
-    <div class="shade"></div>
-    <div class="info">
-      <p class="lbl">Демо 02 · Аренда байков</p>
-      <button class="open" type="button">Открыть
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  </section>
-
-  <section class="screen demo" data-src="https://travelkozko.github.io/step-loud/" aria-label="Демо 03 · Магазин обуви: STEP LOUD">
-    <span class="loading">Загрузка…</span>
-    <iframe title="STEP LOUD" tabindex="-1" loading="lazy" allow="autoplay; fullscreen"></iframe>
-    <div class="shade"></div>
-    <div class="info">
-      <p class="lbl">Демо 03 · Магазин обуви</p>
-      <button class="open" type="button">Открыть
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  </section>
-
 </main>
+<div class="viewer" id="viewer" aria-hidden="true"><span class="spin"></span></div>
 <button class="back" id="back" type="button" hidden>
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
-  Все проекты
+  Назад
 </button>
 
 <script>
@@ -180,33 +175,32 @@ hero.addEventListener('click',()=>{
   if(hero.classList.contains('done')) return next();
   if(!hero.classList.contains('playing')) return start();
 });
-// живые приложения: грузим, когда экран рядом
-const demos=[...document.querySelectorAll('.demo')];
-const load=sec=>{const f=sec.querySelector('iframe');if(!f.src){f.addEventListener('load',()=>sec.classList.add('loaded'),{once:true});f.src=sec.dataset.src;}};
-if('IntersectionObserver' in window){
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){load(e.target);io.unobserve(e.target);}}),{root:feed,rootMargin:'100% 0px'});
-  demos.forEach(d=>io.observe(d));
-}else demos.forEach(load);
+// обложки → приложение открывается поверх витрины; возврат — «Назад» в Telegram
 const tg=window.Telegram&&window.Telegram.WebApp;
-const back=document.getElementById('back');let current=null;
-// в Telegram возврат — его родная кнопка «Назад»; своя кнопка только для обычного браузера
 const inTG=!!(tg&&tg.initData);
+const viewer=document.getElementById('viewer'),back=document.getElementById('back');
+const frames={};let open=null;
 const haptic=t=>{try{tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred(t);}catch(e){}};
-const enter=sec=>{
-  load(sec);current=sec;sec.classList.add('live');document.body.classList.add('inapp');
-  sec.querySelector('iframe').tabIndex=0;back.hidden=inTG;haptic('medium');
+const openApp=src=>{
+  Object.values(frames).forEach(f=>f.hidden=true);
+  let f=frames[src];
+  if(!f){f=document.createElement('iframe');f.title='Демо-приложение';f.allow='autoplay; fullscreen';
+    viewer.classList.remove('loaded');f.addEventListener('load',()=>viewer.classList.add('loaded'),{once:true});
+    f.src=src;viewer.appendChild(f);frames[src]=f;}
+  else viewer.classList.add('loaded');
+  f.hidden=false;open=src;viewer.classList.add('on');viewer.setAttribute('aria-hidden','false');
+  document.body.classList.add('inapp');back.hidden=inTG;haptic('medium');
   try{tg&&tg.BackButton&&tg.BackButton.show();}catch(e){}
 };
-const leave=()=>{
-  if(!current)return;current.classList.remove('live');current.querySelector('iframe').tabIndex=-1;
+const closeApp=()=>{
+  if(!open)return;open=null;viewer.classList.remove('on');viewer.setAttribute('aria-hidden','true');
   document.body.classList.remove('inapp');back.hidden=true;haptic('light');
   try{tg&&tg.BackButton&&tg.BackButton.hide();}catch(e){}
-  current.querySelector('.open').focus({preventScroll:true});current=null;
 };
-demos.forEach(sec=>sec.addEventListener('click',()=>{ if(!sec.classList.contains('live')) enter(sec); }));
-back.addEventListener('click',leave);
-try{tg&&tg.BackButton&&tg.BackButton.onClick(leave);}catch(e){}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')leave();});
+document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>openApp(c.dataset.src)));
+back.addEventListener('click',closeApp);
+try{tg&&tg.BackButton&&tg.BackButton.onClick(closeApp);}catch(e){}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeApp();});
 // в Telegram — лёгкая вибрация при смене экрана
 let last=0;feed.addEventListener('scroll',()=>{const i=Math.round(feed.scrollTop/feed.clientHeight);
   if(i!==last){last=i;try{window.Telegram?.WebApp?.HapticFeedback?.selectionChanged();}catch(e){}}},{passive:true});
