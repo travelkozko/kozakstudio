@@ -1,4 +1,12 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kozak Studio</title>
+<meta name="description" content="Kozak Studio — разработка веб-приложений и Telegram мини-приложений">
+<meta name="theme-color" content="#EEF1F6">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&family=Manrope:wght@500;600&display=swap">
 <style>
@@ -14,6 +22,7 @@
   color-scheme:light;
 }
 html,body{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}
 body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body);overflow:hidden}
 .feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
 .feed::-webkit-scrollbar{display:none}
@@ -54,7 +63,8 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 
 @media (prefers-reduced-motion:reduce){.hint svg{animation:none}.overlay{transition:none}}
 </style>
-
+</head>
+<body>
 <main class="feed" id="feed">
   <section class="screen hero" id="hero" aria-label="Kozak Studio — Web App Development">
     <h1 class="sr">KOZAK STUDIO — Web App Development</h1>
@@ -85,6 +95,7 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 </main>
 
 <script>
+try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();}}catch(e){}
 const feed=document.getElementById('feed'),hero=document.getElementById('hero'),v=document.getElementById('intro');
 const finish=()=>{ // заставка замирает на последнем кадре и больше не повторяется
   if(hero.classList.contains('done'))return;
@@ -104,3 +115,5 @@ hero.addEventListener('click',()=>{ hero.classList.contains('done')?next():finis
 let last=0;feed.addEventListener('scroll',()=>{const i=Math.round(feed.scrollTop/feed.clientHeight);
   if(i!==last){last=i;try{window.Telegram?.WebApp?.HapticFeedback?.selectionChanged();}catch(e){}}},{passive:true});
 </script>
+</body>
+</html>
