@@ -22,6 +22,7 @@
   color-scheme:light;
 }
 html,body{height:100%}
+[hidden]{display:none!important}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}
 body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body);overflow:hidden}
 .feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
@@ -61,14 +62,15 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .demo{padding:0;background:#0E1626}
 .demo iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;pointer-events:none;background:#0E1626}
 .demo .shade{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,14,28,0) 45%,rgba(8,14,28,.55) 72%,rgba(8,14,28,.85) 100%);transition:opacity .5s}
-.demo .info{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:6px;color:#fff;
-  padding:0 max(20px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,rgba(8,14,28,0) 78%,rgba(8,14,28,.7) 100%);transition:opacity .5s}
+.demo{cursor:pointer}
+.demo .info{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;
+  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
   transition:opacity .4s,transform .4s}
-.demo .lbl{margin:0;font:600 11px var(--f-body);letter-spacing:.28em;text-transform:uppercase;opacity:.75}
-.demo h2{margin:0;font:800 clamp(28px,8.5vw,42px)/1.05 var(--f-display);text-wrap:balance}
-.demo p{margin:0 0 14px;max-width:32ch;line-height:1.45;opacity:.85;font-size:14px}
-.open{align-self:flex-start;display:flex;align-items:center;gap:8px;font:600 15px var(--f-body);color:var(--ink);background:#fff;border:0;border-radius:999px;padding:13px 24px;cursor:pointer}
+.demo .lbl{margin:0;min-width:0;font:600 11px var(--f-body);letter-spacing:.2em;text-transform:uppercase;
+  background:rgba(8,14,28,.45);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:9px 14px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.open{flex:none;display:flex;align-items:center;gap:8px;font:600 14px var(--f-body);color:var(--ink);background:#fff;border:0;border-radius:999px;padding:11px 20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .open:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .demo .loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font:500 13px var(--f-body);color:rgba(255,255,255,.6)}
 .demo.loaded .loading{display:none}
@@ -107,8 +109,6 @@ body.inapp .feed{overflow:hidden;scroll-snap-type:none}
     <div class="shade"></div>
     <div class="info">
       <p class="lbl">Демо 01 · Дайв-центр</p>
-      <h2>ПОГРУЖЕНИЕ</h2>
-      <p>Дайв-центр: пробный дайв с погружением по глубинам, от лагуны до китовой акулы.</p>
       <button class="open" type="button">Открыть
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -121,8 +121,6 @@ body.inapp .feed{overflow:hidden;scroll-snap-type:none}
     <div class="shade"></div>
     <div class="info">
       <p class="lbl">Демо 02 · Аренда байков</p>
-      <h2>VIET RIDE</h2>
-      <p>Аренда байков во Вьетнаме: выбрать байк и забронировать прямо в Telegram.</p>
       <button class="open" type="button">Открыть
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -135,8 +133,6 @@ body.inapp .feed{overflow:hidden;scroll-snap-type:none}
     <div class="shade"></div>
     <div class="info">
       <p class="lbl">Демо 03 · Магазин обуви</p>
-      <h2>STEP LOUD</h2>
-      <p>Концепт магазина обуви: коллекция, выбор цвета и размера, доставка с примеркой.</p>
       <button class="open" type="button">Открыть
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -201,7 +197,7 @@ const leave=()=>{
   try{tg&&tg.BackButton&&tg.BackButton.hide();}catch(e){}
   current.querySelector('.open').focus({preventScroll:true});current=null;
 };
-demos.forEach(sec=>sec.querySelector('.open').addEventListener('click',()=>enter(sec)));
+demos.forEach(sec=>sec.addEventListener('click',()=>{ if(!sec.classList.contains('live')) enter(sec); }));
 back.addEventListener('click',leave);
 try{tg&&tg.BackButton&&tg.BackButton.onClick(leave);}catch(e){}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')leave();});
