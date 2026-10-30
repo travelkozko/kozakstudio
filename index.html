@@ -26,7 +26,7 @@ html,body{height:100%}
 :root{
   --top-inset:max(env(safe-area-inset-top,0px),calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px)));
   --bottom-inset:max(env(safe-area-inset-bottom,0px),calc(var(--tg-safe-area-inset-bottom,0px) + var(--tg-content-safe-area-inset-bottom,0px)));
-  padding-top:var(--top-inset);box-sizing:border-box;height:100%}
+  box-sizing:border-box;height:100%}
 body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body);overflow:hidden}
 .feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
 .feed::-webkit-scrollbar{display:none}
@@ -46,7 +46,7 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .hint svg{animation:nudge 1.6s ease-in-out infinite}
 @keyframes nudge{50%{transform:translateY(-5px)}}
 .hint:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.skip{position:absolute;top:14px;right:max(14px,env(safe-area-inset-right,0px));
+.skip{position:absolute;top:calc(14px + var(--top-inset));right:max(14px,env(safe-area-inset-right,0px));
   font:600 12px var(--f-body);color:var(--ink-soft);background:var(--chip);border:1px solid var(--chip-edge);border-radius:999px;
   padding:6px 12px;cursor:pointer;transition:opacity .4s}
 .hero.done .skip{opacity:0;pointer-events:none}
@@ -64,7 +64,7 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 
 /* ---------- ЭКРАНЫ ДЕМО: приложение в своём размере, подпись и «назад» — отдельными полосками ---------- */
 :root{--tg-top:0px;--bar:60px}
-.demo{display:flex;flex-direction:column;padding:var(--tg-top) 0 0;background:#0E1626;cursor:pointer;
+.demo{display:flex;flex-direction:column;padding:var(--top-inset) 0 0;background:#0E1626;cursor:pointer;
   transition:padding-top .35s ease}
 .demo iframe{position:relative;flex:1;min-height:0;width:100%;border:0;display:block;pointer-events:none;background:#0E1626}
 .demo .shade{display:none}
@@ -149,7 +149,8 @@ body.inapp .feed{overflow:hidden;scroll-snap-type:none}
 </button>
 
 <script>
-try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();try{tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}}}catch(e){}
+try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();try{tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}
+  try{if(/android|ios/.test(tg.platform)&&tg.requestFullscreen&&!tg.isFullscreen)tg.requestFullscreen();}catch(e){}}}catch(e){}
 const feed=document.getElementById('feed'),hero=document.getElementById('hero'),v=document.getElementById('intro');
 const finish=()=>{ // заставка замирает на последнем кадре и больше не повторяется
   if(hero.classList.contains('done'))return;
