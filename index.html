@@ -77,7 +77,7 @@ body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f-body)
 .demo .loading{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font:500 13px var(--f-body);color:rgba(255,255,255,.6)}
 .demo.loaded .loading{display:none}
 /* режим «внутри приложения»: снизу полоска уходит, сверху появляется полоска с кнопкой возврата */
-.demo.live{cursor:auto;padding-top:calc(var(--tg-top) + var(--bar))}
+.demo.live{cursor:auto}
 .demo.live iframe{pointer-events:auto}
 .demo.live .info{height:0;opacity:0;border-top:0}
 body.inapp .feed{overflow:hidden;scroll-snap-type:none}
@@ -186,10 +186,12 @@ if('IntersectionObserver' in window){
 }else demos.forEach(load);
 const tg=window.Telegram&&window.Telegram.WebApp;
 const back=document.getElementById('back');let current=null;
+// в Telegram возврат — его родная кнопка «Назад»; своя кнопка только для обычного браузера
+const inTG=!!(tg&&tg.initData);
 const haptic=t=>{try{tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred(t);}catch(e){}};
 const enter=sec=>{
   load(sec);current=sec;sec.classList.add('live');document.body.classList.add('inapp');
-  sec.querySelector('iframe').tabIndex=0;back.hidden=false;haptic('medium');
+  sec.querySelector('iframe').tabIndex=0;back.hidden=inTG;haptic('medium');
   try{tg&&tg.BackButton&&tg.BackButton.show();}catch(e){}
 };
 const leave=()=>{
